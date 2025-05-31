@@ -87,7 +87,7 @@ class _ButtonNavigationState extends State<ButtonNavigation> {
           HomeScreen(userUID: widget.userUID, username: widget.username, photoUserProfile: widget.photoUserProfile),
           UploadPhotoScreen(userUID: widget.userUID), // 2) Pasar userUID
           GalleryScreen(userUID: widget.userUID, username: widget.username, photoUserProfile: widget.photoUserProfile), // 3) Pasar username y photoUserProfile
-          const ProfileScreen()
+          ProfileScreen(userUID: widget.userUID)
         ],
       ),
     );

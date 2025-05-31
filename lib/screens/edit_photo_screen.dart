@@ -5,7 +5,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:upsglam/models/photo_service.dart';
 import 'package:upsglam/models/update_photo_response.dart';
-import 'package:upsglam/screens/gallery_screen.dart';
 import 'package:upsglam/util/dialog.dart';
 import 'package:upsglam/util/imagepicker.dart';
 
@@ -26,7 +25,7 @@ class EditPhotoScreen extends StatefulWidget {
 
 class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
-  final List<String> _filters = ['Filtro A', 'Filtro B', 'Filtro C', 'Filtro D', 'Filtro E', 'Filtro F'];
+  final List<String> _filters = ['filtroLog', 'filtroMedia', 'filtroGaussiano', 'filtroCartoon', 'filtroSketch', 'filtroTermico', 'filtroAsciiUps'];
 
   String? _selectedFilter;
 
@@ -44,16 +43,7 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
             children: [
               IconButton(
                 icon: Icon(Icons.arrow_back, size: 24.sp),
-                onPressed: () => Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (_) => GalleryScreen(
-                      userUID: widget.userUID,
-                      username: widget.username,
-                      photoUserProfile: widget.photoUserProfile,
-                    )
-                  ),
-                )
+                onPressed: () => Navigator.pop(context),
               ),
               SizedBox(width: 10.w),
               Text(
@@ -156,16 +146,26 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
           try {
             _imageFile ??= widget.defaultImage;
 
+            showDialog(
+              context: context,
+              barrierDismissible: false, // para que no se cierre si tocan fuera
+              builder: (_) => const Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+
             final bytes = await PhotoService().procesarImagen(
               userUID: widget.userUID,
               photoFile: _imageFile!,
-              tipoFiltro: 'filtroCartoon', // o el que elijas
+              tipoFiltro: _selectedFilter!, // o el que elijas
             );
             setState(() => _processedImage = bytes);
             //print(uploadPhotoResponse.userUID);
+            Navigator.of(context).pop();
           } catch (e) {
             final msg = e.toString().replaceFirst('Exception: ', '');
             // ignore: use_build_context_synchronously
+            Navigator.of(context).pop();
             dialogBuilder(context, msg);
           }
 
@@ -197,18 +197,37 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
       child: InkWell(
         onTap: () async {
           //'${userUID}_photo_$tipoFiltro.jpg'
-          final tempFile = await PhotoService().bytesToTempFile(
-            _processedImage!,
-            '${widget.userUID}_photo_filtroSketch.jpg',
-          );
+          try{
+            final tempFile = await PhotoService().bytesToTempFile(
+              _processedImage!,
+              '${widget.userUID}_$_selectedFilter.jpg',
+            );
 
-          UpdatePhotoResponse updatePhotoResponse = await PhotoService().updatePhoto(
-              widget.userUID,
-              widget.urlPhoto,
-              tempFile
-          );
+            showDialog(
+              context: context,
+              barrierDismissible: false, // para que no se cierre si tocan fuera
+              builder: (_) => const Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
 
-          print('Foto actualizada');
+            UpdatePhotoResponse updatePhotoResponse = await PhotoService().updatePhoto(
+                widget.userUID,
+                widget.urlPhoto,
+                tempFile
+            );
+
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                content: Text('Fotografía actualizada con exito'),
+              )
+            );
+          } catch (e) {
+            final msg = e.toString().replaceFirst('Exception: ', '');
+            // ignore: use_build_context_synchronously
+            dialogBuilder(context, msg);
+          }
+
         },
         child: Container(
           alignment: Alignment.center,

@@ -196,6 +196,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
 
             UploadPhotoResponse uploadPhotoResponse = await PhotoService().uploadPhoto(
                 widget.userUID,
+                _imageFile!,
                 tempFile
             );
             Navigator.of(context).pop();

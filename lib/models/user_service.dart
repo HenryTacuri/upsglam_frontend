@@ -4,6 +4,7 @@ import 'dart:io';
 
 import 'package:dio/dio.dart';
 import 'package:upsglam/models/create_user_response.dart';
+import 'package:upsglam/models/datauser_response.dart';
 import 'package:upsglam/models/login_user_response.dart';
 
 class UserService {
@@ -18,6 +19,9 @@ class UserService {
   ));
 
   Future<CreateUserResponse> createUser(
+    String firstName,
+    String lastName,
+    String gender,
     String username,
     String email,
     String password,
@@ -25,7 +29,10 @@ class UserService {
     File photoUserProfile,
   ) async {
     // 1) Validación de campos vacíos
-    if (username.isEmpty ||
+    if (firstName.isEmpty ||
+        lastName.isEmpty ||
+        gender.isEmpty ||
+        username.isEmpty ||
         email.isEmpty ||
         password.isEmpty ||
         passwordConfirmed.isEmpty) {
@@ -45,6 +52,9 @@ class UserService {
     final formData = FormData.fromMap({
       'user': MultipartFile.fromString(
         jsonEncode({
+          'firstName': firstName,
+          'lastName': lastName,
+          'gender': gender,
           'username': username,
           'email': email,
           'password': password,
@@ -105,4 +115,26 @@ class UserService {
             throw Exception('Error de conexión. Intenta de nuevo.');
     }
   }
+
+  Future<DatauserResponse> dataUser(String userUID) async {
+    try {
+      final response = await _dio.get(
+        'users/datauser/$userUID', // ajusta la ruta según tu API
+      );
+
+      return DatauserResponse.fromJsonMap(response.data);
+    } on DioException catch (e) {
+      // 3) Si el servidor devuelve un error con body JSON
+      if (e.response != null &&
+          e.response?.data != null &&
+          e.response!.data is Map<String, dynamic>) {
+        final Map<String, dynamic> data = e.response!.data as Map<String, dynamic>;
+        final serverMsg = data['error'] as String? ?? 'Error inesperado al cargar las fotos';
+        throw Exception(serverMsg);
+      }
+      // 4) Otro tipo de fallo (red, timeouts, etc.)
+      throw Exception('Error de conexión. Intenta de nuevo.');
+    }
+  }
+
 }

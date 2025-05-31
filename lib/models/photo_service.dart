@@ -21,6 +21,7 @@ class PhotoService {
   Future<UploadPhotoResponse> uploadPhoto(
     String userUID,     
     File photoUser,
+    File imageFiler,
   ) async {
   
     // 3) Preparar FormData
@@ -29,6 +30,11 @@ class PhotoService {
       'photoUser': await MultipartFile.fromFile(
         photoUser.path,
         filename: '${userUID}_photoUser.jpg',
+        contentType: DioMediaType('image', 'jpg'),
+      ),
+      'imageFiler': await MultipartFile.fromFile(
+        imageFiler.path,
+        filename: '${userUID}_imageFiler.jpg',
         contentType: DioMediaType('image', 'jpg'),
       ),
     });
