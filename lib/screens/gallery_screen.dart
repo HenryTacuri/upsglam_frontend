@@ -1,9 +1,15 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:upsglam/models/comment_service.dart';
 import 'package:upsglam/models/like_service.dart';
+import 'package:upsglam/models/photo_service.dart';
 import 'package:upsglam/models/upload_photo_response.dart';
+import 'package:upsglam/screens/edit_photo_screen.dart';
 
 class GalleryScreen extends StatefulWidget {
 
@@ -71,7 +77,66 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                 radius: 20.r,
                               ),
                               title: Text(widget.username, style: TextStyle(fontSize: 13.sp),),
-                              trailing: const Icon(Icons.more_horiz),
+                              trailing: PopupMenuButton<String>(
+                                icon: Icon(Icons.more_horiz),
+                                onSelected: (String value) async {
+                                  switch (value) {
+                                    case 'editar':
+                                    final File? defaultImage = await _loadDefaultImage(photo.urlPhoto);
+                                      if (defaultImage == null) {
+                                        // defaultImage: muestra un snackbar o alerta de error
+                                        ScaffoldMessenger.of(context).showSnackBar(
+                                          SnackBar(content: Text('No se puede editar la fotografía.')),	
+                                        );
+                                        return;
+                                      }
+
+                                      // Navegar a la pantalla de edición
+                                      Navigator.push(
+                                        context,
+                                        MaterialPageRoute(
+                                          builder: (_) => EditPhotoScreen(
+                                            userUID: widget.userUID,
+                                            defaultImage: defaultImage,
+                                            urlPhoto: photo.urlPhoto,
+                                            username: widget.username,
+                                            photoUserProfile: widget.photoUserProfile,
+                                          )
+                                        ),
+                                      );
+                                      break;
+                                    case 'eliminar':
+                                      showDialog(
+                                        context: context,
+                                        barrierDismissible: false, // para que no se cierre si tocan fuera
+                                        builder: (_) => const Center(
+                                          child: CircularProgressIndicator(),
+                                        ),
+                                      );
+                                      final result = await PhotoService().deletePhoto(
+                                        userUID: widget.userUID,
+                                        urlPhoto: photo.urlPhoto,
+                                      );
+                                      Navigator.of(context).pop();
+                                      ScaffoldMessenger.of(context).showSnackBar(
+                                        SnackBar(
+                                          content: Text('Fotografía eliminada con éxito'),
+                                        )
+                                      );
+                                    break;
+                                  }
+                                },
+                                itemBuilder: (BuildContext context) => [
+                                  PopupMenuItem(
+                                    value: 'editar',
+                                    child: Text('Editar'),
+                                  ),
+                                  PopupMenuItem(
+                                    value: 'eliminar',
+                                    child: Text('Eliminar'),
+                                  ),
+                                ],
+                              ),
                             ),
                           ),
                           Container(
@@ -79,7 +144,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                             height: 300.h,
                             decoration: BoxDecoration(
                               image: DecorationImage(
-                                image: NetworkImage(photo.urlPhoto),
+                                image: NetworkImage(photo.urlPhotoFilter == 'NaN' ? photo.urlPhoto : photo.urlPhotoFilter),
                                 fit: BoxFit.cover,
                               ),
                             ),
@@ -371,6 +436,30 @@ class _GalleryScreenState extends State<GalleryScreen> {
     );
   }
 
+  Future<File?> _loadDefaultImage(String defaultUrl) async {
+    try {
+      final dio = Dio();
+      final response = await dio.get<List<int>>(
+        defaultUrl,
+        options: Options(responseType: ResponseType.bytes),
+      );
+      if (response.statusCode == 200 && response.data != null) {
+        final bytes = response.data!;
+        final tempDir = await getTemporaryDirectory();
+        final file = File('${tempDir.path}/default.jpg');
+        await file.writeAsBytes(bytes);
+        return file;
+      } else {
+        print('Error: estado ${response.statusCode}');
+      }
+    } on DioException catch (e) {
+      print('DioError cargando imagen por defecto: $e');
+    } catch (e) {
+      print('Error inesperado: $e');
+    }
+    return null;
+  }
+  
 }
 
 

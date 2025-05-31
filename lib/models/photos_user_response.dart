@@ -26,17 +26,20 @@ class PhotosUserResponse {
 class Photo {
 
   String urlPhoto;
+  String urlPhotoFilter;
   List<Comment> comments;
   List<Like> likes;
 
   Photo({
       required this.urlPhoto,
+      required this.urlPhotoFilter,
       required this.comments,
       required this.likes,
   });
 
   factory Photo.fromJsonMap(Map<String, dynamic> json) => Photo(
       urlPhoto: json["urlPhoto"],
+      urlPhotoFilter: json["urlPhotoFilter"],
       comments: List<Comment>.from(json["comments"].map((x) => Comment.fromJsonMap(x))),
       likes: List<Like>.from(json["likes"].map((x) => Like.fromJsonMap(x))),
   );

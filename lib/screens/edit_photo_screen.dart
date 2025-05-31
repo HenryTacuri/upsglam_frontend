@@ -4,47 +4,68 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:upsglam/models/photo_service.dart';
-import 'package:upsglam/models/upload_photo_response.dart';
+import 'package:upsglam/models/update_photo_response.dart';
+import 'package:upsglam/screens/gallery_screen.dart';
 import 'package:upsglam/util/dialog.dart';
 import 'package:upsglam/util/imagepicker.dart';
 
-class UploadPhotoScreen extends StatefulWidget {
+class EditPhotoScreen extends StatefulWidget {
 
   final String userUID; 
+  final File defaultImage;
+  final String urlPhoto;
+  final String username;
+  final String photoUserProfile;      
 
-  const UploadPhotoScreen({super.key, required this.userUID});
+
+  const EditPhotoScreen({super.key, required this.userUID, required this.defaultImage, required this.urlPhoto, required this.username, required this.photoUserProfile});
 
   @override
-  State<UploadPhotoScreen> createState() => _UploadPhotoScreenState();
+  State<EditPhotoScreen> createState() => _EditPhotoScreenState();
 }
 
-class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
+class _EditPhotoScreenState extends State<EditPhotoScreen> {
 
-  final List<String> _filters = ['filtroLog', 'filtroMedia', 'filtroGaussiano', 'filtroCartoon', 'filtroSketch', 'filtroTermico', 'filtroAsciiUps'];
+  final List<String> _filters = ['Filtro A', 'Filtro B', 'Filtro C', 'Filtro D', 'Filtro E', 'Filtro F'];
+
   String? _selectedFilter;
 
   File? _imageFile;
 
   Uint8List? _processedImage;
 
-
+  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(child: Column(
         children: [
-          SizedBox(width: 96.w, height: 5.h),
-          Center(
-            child: Text(
-              'Sube una foto',
-              style: TextStyle(
-                fontSize: 20.sp,
-                fontWeight: FontWeight.bold,
-                color: Colors.black
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(Icons.arrow_back, size: 24.sp),
+                onPressed: () => Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => GalleryScreen(
+                      userUID: widget.userUID,
+                      username: widget.username,
+                      photoUserProfile: widget.photoUserProfile,
+                    )
+                  ),
+                )
               ),
-            ),
+              SizedBox(width: 10.w),
+              Text(
+                'Editar Foto',
+                style: TextStyle(fontSize: 20.sp, fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
+          //SizedBox(width: 96.w, height: 5.h),
+
           SizedBox(height: 30.h),
+
           InkWell(
             onTap: () async {
               File _imageFilee = await ImagePickerr().uploadImage('gallery');
@@ -59,27 +80,30 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
                 color: const Color.fromARGB(255, 231, 229, 229),
                 borderRadius: BorderRadius.circular(8.r),
               ),
-              child: _imageFile == null ? Center(
-                child: SizedBox(
-                  width: 100.r,   // ancho personalizado para upload.png
-                  height: 100.r,  // alto personalizado para upload.png
-                  child: Image.asset(
-                    'images/upload.png',
-                    fit: BoxFit.contain, // o BoxFit.cover si prefieres recorte
-                  ),
-                ),
-              )
-              : ClipRRect( //Se muestra la imagen seleccionada
-                borderRadius: BorderRadius.circular(8.r),
-                child: SizedBox.expand(
+              child: _imageFile != null
+                // imagen elegida por el usuario
+              ? ClipRRect(
+                  borderRadius: BorderRadius.circular(8.r),
                   child: Image.file(
                     _imageFile!,
-                    fit: BoxFit.cover, // cubre todo el Container
+                    width: double.infinity,
+                    height: double.infinity,
+                    fit: BoxFit.cover,
                   ),
+                )
+              // imagen por defecto en full container
+              : ClipRRect(
+                borderRadius: BorderRadius.circular(8.r),
+                child: Image.file(
+                  widget.defaultImage,
+                  width: double.infinity,
+                  height: double.infinity,
+                  fit: BoxFit.cover,
                 ),
               ),
             ),
           ),
+
           SizedBox(height: 30.h),
           
           seleccionarFiltro(),
@@ -94,26 +118,26 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
               borderRadius: BorderRadius.circular(8.r),
             ),
             child: _processedImage != null
-              ? ClipRRect(
-                  borderRadius: BorderRadius.circular(8.r), // recorta bordes
-                  child: Image.memory(
-                    _processedImage!,
-                    width: 300.r,
-                    height: 180.r,
-                    fit: BoxFit.cover,
-                  ),
-                )
-              : Center(
-                  child: Text(
-                    'Resultado',
-                    style: TextStyle(
-                      fontSize: 20.sp,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+            ? ClipRRect(
+                borderRadius: BorderRadius.circular(8.r), // recorta bordes
+                child: Image.memory(
+                  _processedImage!,
+                  width: 300.r,
+                  height: 180.r,
+                  fit: BoxFit.cover,
+                ),
+              )
+            : Center(
+                child: Text(
+                  'Resultado',
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
                 ),
-            ),
+              ),
+          ),
 
           SizedBox(height: 30.h),
           processPhoto(),
@@ -130,28 +154,21 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
       child: InkWell(
         onTap: () async {
           try {
-            showDialog(
-              context: context,
-              barrierDismissible: false, // para que no se cierre si tocan fuera
-              builder: (_) => const Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
+            _imageFile ??= widget.defaultImage;
+
             final bytes = await PhotoService().procesarImagen(
               userUID: widget.userUID,
               photoFile: _imageFile!,
-              tipoFiltro: _selectedFilter!, // o el que elijas
+              tipoFiltro: 'filtroCartoon', // o el que elijas
             );
             setState(() => _processedImage = bytes);
-            Navigator.of(context).pop();
             //print(uploadPhotoResponse.userUID);
           } catch (e) {
             final msg = e.toString().replaceFirst('Exception: ', '');
             // ignore: use_build_context_synchronously
-            Navigator.of(context).pop();
             dialogBuilder(context, msg);
           }
-          
+
         },
         child: Container(
           alignment: Alignment.center,
@@ -179,38 +196,19 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
       padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: InkWell(
         onTap: () async {
-
-          try {
-            final tempFile = await PhotoService().bytesToTempFile(
-              _processedImage!,
-              '${widget.userUID}_photo_$_selectedFilter.jpg',
-            );
-
-            showDialog(
-              context: context,
-              barrierDismissible: false, // para que no se cierre si tocan fuera
-              builder: (_) => const Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-
-            UploadPhotoResponse uploadPhotoResponse = await PhotoService().uploadPhoto(
-                widget.userUID,
-                tempFile
-            );
-            Navigator.of(context).pop();
-            ScaffoldMessenger.of(context).showSnackBar(
-              SnackBar(
-                content: Text('Fotografía subida con exito'),
-              )
-            );
-          } catch (e) {
-            final msg = e.toString().replaceFirst('Exception: ', '');
-            // ignore: use_build_context_synchronously
-            Navigator.of(context).pop();
-            dialogBuilder(context, msg);
-          }
           //'${userUID}_photo_$tipoFiltro.jpg'
+          final tempFile = await PhotoService().bytesToTempFile(
+            _processedImage!,
+            '${widget.userUID}_photo_filtroSketch.jpg',
+          );
+
+          UpdatePhotoResponse updatePhotoResponse = await PhotoService().updatePhoto(
+              widget.userUID,
+              widget.urlPhoto,
+              tempFile
+          );
+
+          print('Foto actualizada');
         },
         child: Container(
           alignment: Alignment.center,
@@ -221,7 +219,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
             borderRadius: BorderRadius.circular(10.r)
           ),
           child: Text(
-            'Publicar Foto',
+            'Actualizar Foto',
             style: TextStyle(
               fontSize: 15.sp,
               color: Colors.white,
@@ -258,6 +256,7 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
     );
   }
 
+  
 }
 
 

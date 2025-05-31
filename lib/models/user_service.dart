@@ -11,7 +11,7 @@ class UserService {
 
   final Dio _dio = Dio(BaseOptions(
     //192.168.18.162
-    baseUrl: "http://172.16.209.239:8080/",
+    baseUrl: "http://192.168.18.162:8080/",
     headers: {
       "Content-Type": "application/json",
     },

@@ -103,7 +103,7 @@ class HomeScreen extends StatefulWidget {
                           height: 300.h,
                           decoration: BoxDecoration(
                             image: DecorationImage(
-                              image: NetworkImage(photo.urlPhoto),
+                              image: NetworkImage(photo.urlPhotoFilter == 'NaN' ? photo.urlPhoto : photo.urlPhotoFilter),
                               fit: BoxFit.cover,
                             ),
                           ),

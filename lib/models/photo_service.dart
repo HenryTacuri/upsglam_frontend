@@ -5,13 +5,14 @@ import 'package:path_provider/path_provider.dart';
 
 import 'package:dio/dio.dart';
 import 'package:upsglam/models/photos_user_response.dart';
+import 'package:upsglam/models/update_photo_response.dart';
 import 'package:upsglam/models/upload_photo_response.dart';
 
 class PhotoService {
 
     final Dio _dio = Dio(BaseOptions(
     //192.168.18.162
-    baseUrl: "http://172.16.209.239:8080/",
+    baseUrl: "http://192.168.18.162:8080/",
     headers: {
       "Content-Type": "application/json",
     },
@@ -101,7 +102,6 @@ class PhotoService {
     }
   }
 
-
   Future<Uint8List> procesarImagen({
     required String userUID,
     required File photoFile,
@@ -143,6 +143,69 @@ class PhotoService {
     final file = File('${tempDir.path}/$filename');
     await file.writeAsBytes(bytes, flush: true);
     return file;
+  }
+
+  Future<UpdatePhotoResponse> updatePhoto(
+    String userUID,
+    String oldUrlPhoto,     
+    File photo,
+  ) async {
+  
+    // 3) Preparar FormData
+    final formData = FormData.fromMap({
+      'userUID': userUID,
+      'oldUrlPhoto': oldUrlPhoto,
+      'photo': await MultipartFile.fromFile(
+        photo.path,
+        filename: '${userUID}_photoUser.jpg',
+        contentType: DioMediaType('image', 'jpg'),
+      ),
+    });
+
+    try {
+      final response = await _dio.post(
+        'photos/updatePhoto',
+        data: formData,
+        options: Options(contentType: 'multipart/form-data'),
+      );
+      return UpdatePhotoResponse.fromJsonMap(response.data);
+    } on DioException catch (e) {
+
+      if (e.response != null &&
+          e.response?.data != null &&
+          e.response!.data is Map<String, dynamic>) {
+        final data = e.response!.data as Map<String, dynamic>;
+        final serverMsg = data['error'] as String? ??
+            'Error al crear el usuario';
+        throw Exception(serverMsg);
+      }
+      // 6) Caso de fallo de red u otros errores
+      throw Exception('Error de conexión. Intenta de nuevo.');
+      
+    }
+  }
+
+  Future<Map<String, dynamic>> deletePhoto({
+    required String userUID,
+    required String urlPhoto,
+  }) async {
+    try {
+      final response = await _dio.delete(
+        'photos/deletePhoto',
+        data: {
+          'userUID': userUID,
+          'urlPhoto': urlPhoto,
+        },
+      );
+
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data != null) {
+        final serverMsg = e.response!.data['message'] as String? ?? 'Error al eliminar la foto';
+        throw Exception(serverMsg);
+      }
+      throw Exception('Error de conexión. Intenta de nuevo.');
+    }
   }
 
 }

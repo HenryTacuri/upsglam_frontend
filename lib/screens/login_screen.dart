@@ -80,9 +80,16 @@ class _LoginScreenState extends State<LoginScreen> {
       child: InkWell(
         onTap: () async {
           try {
+            showDialog(
+              context: context,
+              barrierDismissible: false, // para que no se cierre si tocan fuera
+              builder: (_) => const Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
             //await Authentication().Login(email: email.text, password: password.text);
             LoginUserResponse loginUserResponse = await UserService().login(email.text, password.text);
-            print(loginUserResponse.message);
+            Navigator.of(context).pop();
             String userUID = loginUserResponse.userUID;
             String username = loginUserResponse.username;
             String photoUserProfile = loginUserResponse.photoUserProfile;
@@ -96,6 +103,7 @@ class _LoginScreenState extends State<LoginScreen> {
           } catch (e) {
             final msg = e.toString().replaceFirst('Exception: ', '');
             // ignore: use_build_context_synchronously
+            Navigator.of(context).pop();
             dialogBuilder(context, msg);
           }
         },

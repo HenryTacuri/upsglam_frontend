@@ -1,22 +1,22 @@
-class UploadPhotoResponse {
+class UpdatePhotoResponse {
   
-  //String userUID;
-  //String username;
-  //String photoUserProfile;
+  String userUID;
+  String username;
+  String photoUserProfile;
 
   List<Photo> photos;
 
-  UploadPhotoResponse({
-    //required this.userUID,
-    //required this.username,
-    //required this.photoUserProfile,
+  UpdatePhotoResponse({
+    required this.userUID,
+    required this.username,
+    required this.photoUserProfile,
     required this.photos
   });
 
-  factory UploadPhotoResponse.fromJsonMap(Map<String, dynamic> json) => UploadPhotoResponse(
-    //userUID: json["userUID"],//
-    //username: json["username"],
-    //photoUserProfile: json["photoUserProfile"],
+  factory UpdatePhotoResponse.fromJsonMap(Map<String, dynamic> json) => UpdatePhotoResponse(
+    userUID: json["userUID"],//
+    username: json["username"],
+    photoUserProfile: json["photoUserProfile"],
     photos: List<Photo>.from(json["photos"].map((x) => Photo.fromJsonMap(x))),
   );
 
