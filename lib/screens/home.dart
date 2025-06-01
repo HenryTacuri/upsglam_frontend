@@ -36,7 +36,7 @@ class HomeScreen extends StatefulWidget {
             return const Center(child: CircularProgressIndicator());
           }
           if (!snapCols.hasData || snapCols.data!.docs.isEmpty) {
-            return const Center(child: Text('No hay datos.'));
+            return const Center(child: Text('No hay publicaciones.'));
           }
 
           // Armamos una lista "plana" de posts de todos los usuarios
@@ -150,7 +150,7 @@ class HomeScreen extends StatefulWidget {
   }
 
 
-Widget buttonLike(
+  Widget buttonLike(
     BuildContext context,
     Photo photo,
     String ownerUID,
@@ -227,7 +227,7 @@ Widget buttonLike(
                           Padding(
                             padding: EdgeInsets.all(16.w),
                             child: Text(
-                              'Likes (${updatedPhoto.likes.length})',
+                              'Likes (${updatedPhoto.likes.length - 1})',
                               style: TextStyle(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.bold,
@@ -240,15 +240,23 @@ Widget buttonLike(
                               shrinkWrap: true,
                               itemCount: updatedPhoto.likes.length,
                               itemBuilder: (_, i) {
-                                final like =
-                                    updatedPhoto.likes[i];
-                                return ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        like.photoUserProfile),
-                                  ),
-                                  title: Text(like.username),
-                                );
+                                if(i == 0) {
+                                  return Center(
+                                    child: Text(
+                                      'Se el primero en dar like',
+                                      style: TextStyle(fontSize: 16.sp),
+                                    ),
+                                  );
+                                } else {
+                                  final like = updatedPhoto.likes[i];
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          like.photoUserProfile),
+                                    ),
+                                    title: Text(like.username),
+                                  );
+                                }
                               },
                             ),
                           ),
@@ -262,7 +270,7 @@ Widget buttonLike(
             );
           },
           child: Text(
-            '${photo.likes.length}',
+            '${photo.likes.length - 1}',
             style: TextStyle(
               fontSize: 16.sp,
               decoration: TextDecoration.underline,
@@ -330,7 +338,7 @@ Widget buttonLike(
                           Padding(
                             padding: EdgeInsets.all(16.w),
                             child: Text(
-                              'Comentarios (${currentPhoto.comments.length})',
+                              'Comentarios (${currentPhoto.comments.length - 1})',
                               style: TextStyle(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.bold,
@@ -344,16 +352,24 @@ Widget buttonLike(
                               itemCount:
                                   currentPhoto.comments.length,
                               itemBuilder: (_, i) {
-                                final cmt =
-                                    currentPhoto.comments[i];
-                                return ListTile(
-                                  leading: CircleAvatar(
-                                    backgroundImage: NetworkImage(
-                                        cmt.photoUserProfile),
-                                  ),
-                                  title: Text(cmt.username),
-                                  subtitle: Text(cmt.comment),
-                                );
+                                if (i == 0) {
+                                  return Center(
+                                    child: Text(
+                                      'Sé el primero en comentar',
+                                      style: TextStyle(fontSize: 16.sp),
+                                    ),
+                                  );
+                                } else {
+                                  final cmt = currentPhoto.comments[i];
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      backgroundImage: NetworkImage(
+                                          cmt.photoUserProfile),
+                                    ),
+                                    title: Text(cmt.username),
+                                    subtitle: Text(cmt.comment),
+                                  );
+                                }
                               },
                             ),
                           ),
@@ -410,7 +426,7 @@ Widget buttonLike(
           },
         ),
         SizedBox(width: 8.w),
-        Text('${photo.comments.length}'),
+        Text('${photo.comments.length - 1}'),
       ],
     );
   }

@@ -44,7 +44,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
               return Center(child: CircularProgressIndicator());
             }
             if (!snapDoc.hasData || !snapDoc.data!.exists) {
-              return Center(child: Text('No data found.'));
+              return Center(child: Text('No hay publicaciones.'));
             }
 
             
@@ -254,7 +254,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                           Padding(
                             padding: EdgeInsets.all(16.w),
                             child: Text(
-                              'Likes (${updatedPhoto.likes.length})',
+                              'Likes (${updatedPhoto.likes.length -1})',
                               style: TextStyle(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.bold,
@@ -269,14 +269,23 @@ class _GalleryScreenState extends State<GalleryScreen> {
                               shrinkWrap: true,
                               itemCount: updatedPhoto.likes.length,
                               itemBuilder: (_, i) {
-                                final photoUserProfile = updatedPhoto.likes[i].photoUserProfile;
-                                final username = updatedPhoto.likes[i].username;
-                                return ListTile(
-                                  leading: CircleAvatar(
-                                    child: Image.network(photoUserProfile)
-                                  ),
-                                  title: Text(username),
-                                );
+                                if(i==0) {
+                                  return Center(
+                                    child: Text(
+                                      'Se el primero en dar like',
+                                      style: TextStyle(fontSize: 16.sp),
+                                    ),
+                                  );
+                                } else {
+                                  final photoUserProfile = updatedPhoto.likes[i].photoUserProfile;
+                                  final username = updatedPhoto.likes[i].username;
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      child: Image.network(photoUserProfile)
+                                    ),
+                                    title: Text(username),
+                                  );
+                                }
                               },
                             ),
                           ),
@@ -291,7 +300,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
             );
           },
           child: Text(
-            '${photo.likes.length}',
+            '${photo.likes.length - 1}',
             style: TextStyle(
               fontSize: 16.sp,
               decoration: TextDecoration.underline,
@@ -355,7 +364,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                           Padding(
                             padding: EdgeInsets.all(16.w),
                             child: Text(
-                              'Comentarios (${currentPhoto.comments.length})',
+                              'Comentarios (${currentPhoto.comments.length - 1})',
                               style: TextStyle(
                                 fontSize: 18.sp,
                                 fontWeight: FontWeight.bold,
@@ -370,14 +379,23 @@ class _GalleryScreenState extends State<GalleryScreen> {
                               shrinkWrap: true,
                               itemCount: currentPhoto.comments.length,
                               itemBuilder: (_, i) {
-                                final cmt = currentPhoto.comments[i];
-                                return ListTile(
-                                  leading: CircleAvatar(
-                                    child: Image.network(cmt.photoUserProfile)
-                                  ),
-                                  title: Text(cmt.username),
-                                  subtitle: Text(cmt.comment),
-                                );
+                                if( i == 0) {
+                                  return Center(
+                                    child: Text(
+                                      'Sé el primero en comentar',
+                                      style: TextStyle(fontSize: 16.sp),
+                                    ),
+                                  );
+                                } else {
+                                  final cmt = currentPhoto.comments[i];
+                                  return ListTile(
+                                    leading: CircleAvatar(
+                                      child: Image.network(cmt.photoUserProfile)
+                                    ),
+                                    title: Text(cmt.username),
+                                    subtitle: Text(cmt.comment),
+                                  );
+                                }
                               },
                             ),
                           ),
@@ -431,10 +449,11 @@ class _GalleryScreenState extends State<GalleryScreen> {
           },
         ),
         SizedBox(width: 8.w),
-        Text('${photo.comments.length}'),
+        Text('${photo.comments.length - 1}'),
       ],
     );
   }
+
 
   Future<File?> _loadDefaultImage(String defaultUrl) async {
     try {

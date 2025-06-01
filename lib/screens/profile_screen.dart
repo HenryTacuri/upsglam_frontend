@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:upsglam/auth/auth_screen.dart';
 import 'package:upsglam/models/datauser_response.dart';
 import 'package:upsglam/models/user_service.dart';
+import 'package:upsglam/util/dialog.dart';
 
 class ProfileScreen extends StatefulWidget {
 
@@ -81,8 +83,29 @@ class _ProfileScreenState extends State<ProfileScreen> {
       padding: EdgeInsets.symmetric(horizontal: 10.w),
       child: InkWell(
         onTap: () async {
-          //'${userUID}_photo_$tipoFiltro.jpg'
+          try {
+          showDialog(
+              context: context,
+              barrierDismissible: false, // para que no se cierre si tocan fuera
+              builder: (_) => const Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
 
+            await UserService().logout(widget.userUID);
+            // ignore: use_build_context_synchronously
+            Navigator.of(context).pop(); 
+            // Cerrar el diálogo de carga
+            // ignore: use_build_context_synchronously
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (_) => const AuthScreen())
+            ); // Redirigir a l
+          } catch (e) {
+            // ignore: use_build_context_synchronously
+            Navigator.of(context).pop(); 
+            // ignore: use_build_context_synchronously
+            dialogBuilder(context, 'Error al cerrar sesión: $e');
+          }
         },
         child: Container(
           alignment: Alignment.center,

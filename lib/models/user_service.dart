@@ -116,6 +116,7 @@ class UserService {
     }
   }
 
+
   Future<DatauserResponse> dataUser(String userUID) async {
     try {
       final response = await _dio.get(
@@ -133,6 +134,26 @@ class UserService {
         throw Exception(serverMsg);
       }
       // 4) Otro tipo de fallo (red, timeouts, etc.)
+      throw Exception('Error de conexión. Intenta de nuevo.');
+    }
+  }
+
+
+  Future<Map<String, dynamic>> logout(String userUID) async {
+
+    try {
+      final response = await _dio.post(
+        'auth/logout',
+        data: {
+          'userUID': userUID,
+        },
+      );
+      return response.data as Map<String, dynamic>;
+    } on DioException catch (e) {
+      if (e.response != null && e.response?.data != null) {
+        final serverMsg = e.response!.data['error'] as String? ?? 'Error al cerrar sesión';
+        throw Exception(serverMsg);
+      }
       throw Exception('Error de conexión. Intenta de nuevo.');
     }
   }
