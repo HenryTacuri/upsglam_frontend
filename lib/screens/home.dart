@@ -100,7 +100,6 @@ class HomeScreen extends StatefulWidget {
                               ownerUsername,
                               style: TextStyle(fontSize: 13.sp),
                             ),
-                            trailing: const Icon(Icons.more_horiz),
                           ),
                         ),
 
@@ -302,156 +301,234 @@ class HomeScreen extends StatefulWidget {
     );
   }
 
-  Widget buttonComment(
-    BuildContext context,
-    Photo photo,
-    String ownerUID,
-    int photoIndex,
-  ) {
-    final commentController = TextEditingController();
+Widget buttonComment(
+  BuildContext context,
+  Photo photo,
+  String ownerUID,
+  int photoIndex,
+) {
+  final commentController = TextEditingController();
 
-    return Row(
-      children: [
-        IconButton(
-          icon: Icon(Icons.comment_outlined, size: 25.w),
-          onPressed: () {
-            showModalBottomSheet(
-              context: context,
-              isScrollControlled: true,
-              builder: (_) => Padding(
-                padding: EdgeInsets.only(
-                  bottom: MediaQuery.of(context).viewInsets.bottom,
-                ),
-                child: SafeArea(
-                  child: StreamBuilder<DocumentSnapshot>(
-                    stream: FirebaseFirestore.instance
-                        .collection('photos')
-                        .doc(ownerUID)
-                        .snapshots(),
-                    builder: (c, snap) {
-                      if (snap.connectionState ==
-                          ConnectionState.waiting) {
-                        return SizedBox(
-                          height: 200.w,
-                          child: const Center(
-                              child: CircularProgressIndicator()),
-                        );
-                      }
-                      if (!snap.hasData || !snap.data!.exists) {
-                        return SizedBox(
-                          height: 200.w,
-                          child: const Center(
-                              child: Text('No hay datos')),
-                        );
-                      }
+  return Row(
+    children: [
+      // -------------------------------- ICONO DEL BOTÓN --------------------------------
+      IconButton(
+        icon: Icon(Icons.comment_outlined, size: 25.w),
+        onPressed: () async {
+          // 1) Pre-cargar el snapshot antes de mostrar el modal
+          DocumentSnapshot<Map<String, dynamic>> initialSnap =
+              await FirebaseFirestore.instance
+                  .collection('photos')
+                  .doc(ownerUID)
+                  .get();
 
-                      final data =
-                          snap.data!.data() as Map<String, dynamic>;
-                      final photosList = (data['photos'] as List)
-                          .map((e) =>
-                              Photo.fromJsonMap(e as Map<String, dynamic>))
-                          .toList();
-                      final currentPhoto = photosList[photoIndex];
-
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.all(16.w),
-                            child: Text(
-                              'Comentarios (${currentPhoto.comments.length - 1})',
-                              style: TextStyle(
-                                fontSize: 18.sp,
-                                fontWeight: FontWeight.bold,
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (_) {
+              return DraggableScrollableSheet(
+                initialChildSize: 0.75,
+                minChildSize: 0.3,
+                maxChildSize: 0.9,
+                expand: false,
+                builder: (BuildContext sheetContext, ScrollController scrollController) {
+                  return GestureDetector(
+                    behavior: HitTestBehavior.opaque,
+                    onTap: () {},
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+                      ),
+                      child: Padding(
+                        padding: EdgeInsets.only(
+                          bottom: MediaQuery.of(sheetContext).viewInsets.bottom,
+                        ),
+                        child: Column(
+                          children: [
+                            // ------------------------- DRAG HANDLE -------------------------
+                            Container(
+                              width: 40.w,
+                              height: 4.w,
+                              margin: EdgeInsets.symmetric(vertical: 8.w),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[300],
+                                borderRadius: BorderRadius.circular(2.w),
                               ),
                             ),
-                          ),
-                          const Divider(),
-                          Flexible(
-                            child: ListView.builder(
-                              shrinkWrap: true,
-                              itemCount:
-                                  currentPhoto.comments.length,
-                              itemBuilder: (_, i) {
-                                if (i == 0) {
-                                  return Center(
-                                    child: Text(
-                                      'Sé el primero en comentar',
-                                      style: TextStyle(fontSize: 16.sp),
-                                    ),
-                                  );
-                                } else {
-                                  final cmt = currentPhoto.comments[i];
-                                  return ListTile(
-                                    leading: CircleAvatar(
-                                      backgroundImage: NetworkImage(
-                                          cmt.photoUserProfile),
-                                    ),
-                                    title: Text(cmt.username),
-                                    subtitle: Text(cmt.comment),
-                                  );
-                                }
-                              },
-                            ),
-                          ),
-                          Padding(
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 8.w,
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: TextField(
-                                    controller: commentController,
-                                    decoration: InputDecoration(
-                                      hintText: 'Añadir un comentario…',
-                                      border: OutlineInputBorder(
-                                        borderRadius:
-                                            BorderRadius.circular(
-                                                8.r),
+
+                            // ------------ CONTENIDO DINÁMICO (ENCABEZADO + LISTA) ------------
+                            Expanded(
+                              child: StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+                                initialData: initialSnap,
+                                stream: FirebaseFirestore.instance
+                                    .collection('photos')
+                                    .doc(ownerUID)
+                                    .snapshots(),
+                                builder: (context, snap) {
+                                  // Si no hay datos aún, mostramos loader
+                                  if (snap.data == null) {
+                                    return Center(child: CircularProgressIndicator());
+                                  }
+
+                                  // Extraer datos actualizados del snapshot
+                                  final data = snap.data!.data()! as Map<String, dynamic>;
+                                  final photosList = (data['photos'] as List<dynamic>)
+                                      .map((e) => Photo.fromJsonMap(e as Map<String, dynamic>))
+                                      .toList();
+                                  final currentPhoto = photosList[photoIndex];
+
+                                  return Column(
+                                    children: [
+                                      // ----------------------- ENCABEZADO DINÁMICO -----------------------
+                                      Padding(
+                                        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.w),
+                                        child: Text(
+                                          'Comentarios (${currentPhoto.comments.length - 1})',
+                                          style: TextStyle(
+                                            fontSize: 18.sp,
+                                            fontWeight: FontWeight.bold,
+                                          ),
+                                        ),
                                       ),
+                                      const Divider(),
+
+                                      // ----------------------- LISTA DE COMENTARIOS -----------------------
+                                      Expanded(
+                                        child: currentPhoto.comments.length <= 1
+                                            ? Center(
+                                                child: Padding(
+                                                  padding: EdgeInsets.symmetric(vertical: 24.w),
+                                                  child: Text(
+                                                    'Sé el primero en comentar',
+                                                    style: TextStyle(fontSize: 16.sp),
+                                                  ),
+                                                ),
+                                              )
+                                            : ListView.builder(
+                                                controller: scrollController,
+                                                shrinkWrap: true,
+                                                itemCount: currentPhoto.comments.length,
+                                                itemBuilder: (_, i) {
+                                                  if (i == 0) return SizedBox.shrink();
+                                                  final cmt = currentPhoto.comments[i];
+                                                  return ListTile(
+                                                    leading: CircleAvatar(
+                                                      backgroundImage: NetworkImage(cmt.photoUserProfile),
+                                                    ),
+                                                    title: Text(cmt.username),
+                                                    subtitle: Text(cmt.comment),
+                                                  );
+                                                },
+                                              ),
+                                      ),
+                                    ],
+                                  );
+                                },
+                              ),
+                            ),
+
+                            // ---------- CAMPO DE TEXTO + BOTÓN ENVIAR (siempre fijo abajo) ----------
+                            Padding(
+                              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.w),
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: TextField(
+                                      controller: commentController,
+                                      textInputAction: TextInputAction.send,
+                                      decoration: InputDecoration(
+                                        hintText: 'Añadir un comentario…',
+                                        border: OutlineInputBorder(
+                                          borderRadius: BorderRadius.circular(8.r),
+                                        ),
+                                        contentPadding: EdgeInsets.symmetric(
+                                          horizontal: 12.w,
+                                          vertical: 8.w,
+                                        ),
+                                      ),
+                                      onSubmitted: (_) async {
+                                        final texto = commentController.text.trim();
+                                        if (texto.isEmpty) return;
+                                        await CommentService().postComment(
+                                          documentId: ownerUID,
+                                          photoIndex: photoIndex,
+                                          commenterUID: widget.userUID,
+                                          commentText: texto,
+                                          username: widget.username,
+                                          photoUserProfile: widget.photoUserProfile,
+                                        );
+                                        commentController.clear();
+                                      },
                                     ),
                                   ),
-                                ),
-                                IconButton(
-                                  icon: const Icon(Icons.send),
-                                  onPressed: () async {
-                                    final text =
-                                        commentController.text;
-                                    await CommentService()
-                                        .postComment(
-                                      documentId: ownerUID,
-                                      photoIndex: photoIndex,
-                                      commenterUID:
-                                          widget.userUID,
-                                      commentText: text,
-                                      username:
-                                          widget.username,
-                                      photoUserProfile:
-                                          widget.photoUserProfile,
-                                    );
-                                    commentController.clear();
-                                  },
-                                ),
-                              ],
+                                  IconButton(
+                                    icon: Icon(Icons.send),
+                                    onPressed: () async {
+                                      final texto = commentController.text.trim();
+                                      if (texto.isEmpty) return;
+                                      await CommentService().postComment(
+                                        documentId: ownerUID,
+                                        photoIndex: photoIndex,
+                                        commenterUID: widget.userUID,
+                                        commentText: texto,
+                                        username: widget.username,
+                                        photoUserProfile: widget.photoUserProfile,
+                                      );
+                                      commentController.clear();
+                                    },
+                                  ),
+                                ],
+                              ),
                             ),
-                          ),
-                        ],
-                      );
-                    },
-                  ),
-                ),
-              ),
-            );
-          },
-        ),
-        SizedBox(width: 8.w),
-        Text('${photo.comments.length - 1}'),
-      ],
-    );
-  }
-  
+                          ],
+                        ),
+                      ),
+                    ),
+                  );
+                },
+              );
+            },
+          );
+        },
+      ),
+
+      const SizedBox(width: 8),
+
+      // ----------------- CONTADOR FUERA DEL MODAL (REACTIVO) -----------------
+      StreamBuilder<DocumentSnapshot<Map<String, dynamic>>>(
+        stream: FirebaseFirestore.instance
+            .collection('photos')
+            .doc(ownerUID)
+            .snapshots(),
+        builder: (context, snap) {
+          if (!snap.hasData || !snap.data!.exists) {
+            return Text('0');
+          }
+
+          final data = snap.data!.data()! as Map<String, dynamic>;
+          final photosList = (data['photos'] as List<dynamic>)
+              .map((e) => Photo.fromJsonMap(e as Map<String, dynamic>))
+              .toList();
+
+          if (photoIndex < 0 || photoIndex >= photosList.length) {
+            return Text('0');
+          }
+
+          final currentPhoto = photosList[photoIndex];
+          final count = currentPhoto.comments.length - 1;
+
+          return Text(
+            '$count',
+            style: TextStyle(fontSize: 16.sp),
+          );
+        },
+      ),
+    ],
+  );
+}
+
   String _formatDate(Timestamp timestamp) {
     final date = timestamp.toDate();
     final formatter = DateFormat('dd/MM/yyyy HH:mm', 'es');

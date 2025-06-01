@@ -12,7 +12,8 @@ class PhotoService {
 
     final Dio _dio = Dio(BaseOptions(
     //192.168.18.162
-    baseUrl: "http://192.168.18.162:8080/",
+    //192.168.18.20
+    baseUrl: "http://192.168.18.20:8080/",
     headers: {
       "Content-Type": "application/json",
     },
