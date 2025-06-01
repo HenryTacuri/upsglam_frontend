@@ -4,6 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:upsglam/models/comment_service.dart';
 import 'package:upsglam/models/like_service.dart';
 import 'package:upsglam/models/photos_user_response.dart';
+import 'package:intl/intl.dart';
 
 class HomeScreen extends StatefulWidget {
 
@@ -60,6 +61,12 @@ class HomeScreen extends StatefulWidget {
             }
           }
 
+            posts.sort((a, b) {
+              final dateA = (a['photo'] as Photo).date;
+              final dateB = (b['photo'] as Photo).date;
+              return dateB.compareTo(dateA); // orden descendente
+            });
+
           return CustomScrollView(
             slivers: [
               const SliverAppBar(
@@ -105,6 +112,20 @@ class HomeScreen extends StatefulWidget {
                             image: DecorationImage(
                               image: NetworkImage(photo.urlPhotoFilter == 'NaN' ? photo.urlPhoto : photo.urlPhotoFilter),
                               fit: BoxFit.cover,
+                            ),
+                          ),
+                        ),
+
+                        Container(
+                          color: const Color.fromARGB(255, 255, 255, 255), // <– el color de fondo que desees
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 10.h),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: Text(
+                                _formatDate(photo.date),
+                                style: TextStyle(fontSize: 12.sp),
+                              ),
                             ),
                           ),
                         ),
@@ -431,6 +452,13 @@ class HomeScreen extends StatefulWidget {
     );
   }
   
+  String _formatDate(Timestamp timestamp) {
+    final date = timestamp.toDate();
+    final formatter = DateFormat('dd/MM/yyyy HH:mm', 'es');
+    return formatter.format(date);
+  }
+
+
 }
 
 

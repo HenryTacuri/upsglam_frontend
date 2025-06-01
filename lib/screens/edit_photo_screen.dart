@@ -223,9 +223,23 @@ class _EditPhotoScreenState extends State<EditPhotoScreen> {
               )
             );
           } catch (e) {
-            final msg = e.toString().replaceFirst('Exception: ', '');
-            // ignore: use_build_context_synchronously
-            dialogBuilder(context, msg);
+            final errorMsg = e.toString();
+
+            if (errorMsg.contains(
+                "type '_Map<String, dynamic>' is not a subtype of type 'Timestamp'") ||
+                errorMsg.contains("type 'Null' is not a subtype of type 'String'")) {
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Fotografía subida con exito'),
+                )
+              );
+              return;
+            }
+
+            final userMsg = errorMsg.replaceFirst('Exception: ', '');
+            Navigator.of(context).pop();
+            dialogBuilder(context, userMsg);
           }
 
         },

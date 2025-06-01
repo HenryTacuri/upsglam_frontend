@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+
 class UpdatePhotoResponse {
   
   String userUID;
@@ -27,12 +29,14 @@ class Photo {
 
   String urlPhoto;
   String urlPhotoFilter;
+  Timestamp date;
   List<Comment> comments;
   List<Like> likes;
 
   Photo({
       required this.urlPhoto,
       required this.urlPhotoFilter,
+      required this.date,
       required this.comments,
       required this.likes,
   });
@@ -40,6 +44,7 @@ class Photo {
   factory Photo.fromJsonMap(Map<String, dynamic> json) => Photo(
       urlPhoto: json["urlPhoto"],
       urlPhotoFilter: json["urlPhotoFilter"],
+      date: json["date"],
       comments: List<Comment>.from(json["comments"].map((x) => Comment.fromJsonMap(x))),
       likes: List<Like>.from(json["likes"].map((x) => Like.fromJsonMap(x))),
   );

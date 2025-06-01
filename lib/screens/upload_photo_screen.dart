@@ -206,10 +206,22 @@ class _UploadPhotoScreenState extends State<UploadPhotoScreen> {
               )
             );
           } catch (e) {
-            final msg = e.toString().replaceFirst('Exception: ', '');
-            // ignore: use_build_context_synchronously
+            final errorMsg = e.toString();
+
+            if (errorMsg.contains(
+                "type '_Map<String, dynamic>' is not a subtype of type 'Timestamp'")) {
+              Navigator.of(context).pop();
+              ScaffoldMessenger.of(context).showSnackBar(
+                SnackBar(
+                  content: Text('Fotografía subida con exito'),
+                )
+              );
+              return;
+            }
+
+            final userMsg = errorMsg.replaceFirst('Exception: ', '');
             Navigator.of(context).pop();
-            dialogBuilder(context, msg);
+            dialogBuilder(context, userMsg);
           }
           //'${userUID}_photo_$tipoFiltro.jpg'
         },

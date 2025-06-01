@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:intl/intl.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
@@ -52,8 +53,9 @@ class _GalleryScreenState extends State<GalleryScreen> {
             final data = snapDoc.data!.data() as Map<String, dynamic>;
             final photos = (data['photos'] as List<dynamic>)
                 .map((e) => Photo.fromJsonMap(e as Map<String, dynamic>))
-                .toList();
-
+                .toList()
+              ..sort((a, b) => b.date.compareTo(a.date));
+              
             return CustomScrollView(
               slivers: [
                 SliverAppBar(
@@ -149,6 +151,21 @@ class _GalleryScreenState extends State<GalleryScreen> {
                               ),
                             ),
                           ),
+                          
+                          Container(
+                            color: const Color.fromARGB(255, 255, 255, 255), // <– el color de fondo que desees
+                            child: Padding(
+                              padding: EdgeInsets.symmetric(vertical: 6.h, horizontal: 10.h),
+                              child: Align(
+                                alignment: Alignment.centerLeft,
+                                child: Text(
+                                  _formatDate(photo.date),
+                                  style: TextStyle(fontSize: 12.sp),
+                                ),
+                              ),
+                            ),
+                          ),
+
                           Container(
                             width: 375.w,
                             color: Colors.white,
@@ -164,7 +181,7 @@ class _GalleryScreenState extends State<GalleryScreen> {
                                 )
                               ],
                             ),
-                          )
+                          ),
                         ],
                       );
                     },
@@ -479,6 +496,12 @@ class _GalleryScreenState extends State<GalleryScreen> {
     return null;
   }
   
+  String _formatDate(Timestamp timestamp) {
+    final date = timestamp.toDate();
+    final formatter = DateFormat('dd/MM/yyyy HH:mm', 'es');
+    return formatter.format(date);
+  }
+
 }
 
 
