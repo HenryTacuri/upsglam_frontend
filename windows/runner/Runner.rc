@@ -90,12 +90,12 @@ BEGIN
         BLOCK "040904e4"
         BEGIN
             VALUE "CompanyName", "com.example" "\0"
-            VALUE "FileDescription", "upsglam" "\0"
+            VALUE "FileDescription", "app_instagram" "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
-            VALUE "InternalName", "upsglam" "\0"
+            VALUE "InternalName", "app_instagram" "\0"
             VALUE "LegalCopyright", "Copyright (C) 2025 com.example. All rights reserved." "\0"
-            VALUE "OriginalFilename", "upsglam.exe" "\0"
-            VALUE "ProductName", "upsglam" "\0"
+            VALUE "OriginalFilename", "app_instagram.exe" "\0"
+            VALUE "ProductName", "app_instagram" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"
         END
     END

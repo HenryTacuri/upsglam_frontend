@@ -1,6 +1,6 @@
 {
-    "name": "upsglam",
-    "short_name": "upsglam",
+    "name": "app_instagram",
+    "short_name": "app_instagram",
     "start_url": ".",
     "display": "standalone",
     "background_color": "#0175C2",

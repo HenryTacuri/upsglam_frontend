@@ -1,6 +1,5 @@
+import 'package:app_instagram/screen/home.dart';
 import 'package:flutter/material.dart';
-import 'package:upsglam/screens/login_screen.dart';
-import 'package:upsglam/screens/signup_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   const AuthScreen({super.key});
@@ -10,9 +9,7 @@ class AuthScreen extends StatefulWidget {
 }
 
 class _AuthScreenState extends State<AuthScreen> {
-
   bool a = true;
-  
   void go() {
     setState(() {
       a = !a;
@@ -21,13 +18,19 @@ class _AuthScreenState extends State<AuthScreen> {
 
   @override
   Widget build(BuildContext context) {
-    
-    if(a) {
-      return LoginScreen(go);
-    } else {
-      return SignupScreen(go);
-    }
-
+    return Scaffold(
+      appBar: AppBar(title: const Text("Auth Screen")),
+      body: Center(
+        child: ElevatedButton(
+          onPressed: () {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const HomeScreen()),
+            );
+          },
+          child: const Text("Login"),
+        ),
+      ),
+    );
   }
-
 }
