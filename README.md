@@ -59,9 +59,9 @@ Todos los Dockerfiles con los cuales se construyeron las imagenes de docker (aho
 Si no tenemos una cuenta creada, hacemos clic en el botón 'Regístrate' y completamos los campos.
 
 <p align="center">
-  <img src="imagenes_uso_app/Inicio.jpg" width="200"/>
-  <img src="imagenes_uso_app/creacionCuenta.jpg" width="200"/>
-  <img src="imagenes_uso_app/usuarioCreado.jpg" width="200"/>
+  <img src="imagenes_uso_app/Inicio.jpg" width="300"/>
+  <img src="imagenes_uso_app/creacionCuenta.jpg" width="300"/>
+  <img src="imagenes_uso_app/usuarioCreado.jpg" width="300"/>
 </p>
 
 **2.** Login
@@ -69,7 +69,7 @@ Si no tenemos una cuenta creada, hacemos clic en el botón 'Regístrate' y compl
 Iniciamos sesión con nuestra cuenta creada.
 
 <p align="center">
-  <img src="imagenes_uso_app\inicirSesion.jpg" width="200"/>
+  <img src="imagenes_uso_app\inicirSesion.jpg" width="300"/>
 </p>
 
 **3.** Procesamiento y publicación de fotos 
@@ -77,7 +77,7 @@ Iniciamos sesión con nuestra cuenta creada.
 Para publicar una foto, vamos al apartado 'Subir fotos', seleccionamos una imagen, elegimos un filtro y hacemos clic en 'Aplicar filtro'. Finalmente, damos clic en 'Publicar foto'.
 
 <p align="center">
-  <img src="imagenes_uso_app\publicarFoto.jpg" width="200"/>
+  <img src="imagenes_uso_app\publicarFoto.jpg" width="300"/>
 </p>
 
 **4.** Galería de fotos
@@ -85,9 +85,9 @@ Para publicar una foto, vamos al apartado 'Subir fotos', seleccionamos una image
 Dentro del apartado de galería de fotos, podemos encontrar únicamente nuestras publicaciones, donde podemos dar 'me gusta' y dejar comentarios.
 
 <p align="center">
-  <img src="imagenes_uso_app\verP.jpg" width="200"/>
-  <img src="imagenes_uso_app\darMeGustaP.jpg" width="200"/>
-  <img src="imagenes_uso_app\comentarP.jpg" width="200"/>
+  <img src="imagenes_uso_app\verP.jpg" width="300"/>
+  <img src="imagenes_uso_app\darMeGustaP.jpg" width="300"/>
+  <img src="imagenes_uso_app\comentarP.jpg" width="300"/>
 </p>
 
 **5.** Feed de publicaciones
@@ -95,11 +95,17 @@ Dentro del apartado de galería de fotos, podemos encontrar únicamente nuestras
 En el feed de publicaciones se muestran tanto nuestras publicaciones como las de otros usuarios, y podemos interactuar con ellas dando 'me gusta' y dejando comentarios.
 
 <p align="center">
-  <img src="imagenes_uso_app\feedP.jpg" width="200"/>
-  <img src="imagenes_uso_app\comentarFeed.jpg" width="200"/>
+  <img src="imagenes_uso_app\feedP.jpg" width="300"/>
+  <img src="imagenes_uso_app\comentarFeed.jpg" width="300"/>
 </p>
 
 **7.** Datos del usuario
+
+En la sección de perfil se muestra toda nuestra información personal de nuestra cuenta.
+
+<p align="center">
+  <img src="imagenes_uso_app\perfil.jpg" width="300"/>
+</p>
 
 ### **Repositorios**
 
