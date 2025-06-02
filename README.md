@@ -92,6 +92,13 @@ Dentro del apartado de galería de fotos, podemos encontrar únicamente nuestras
 
 **5.** Feed de publicaciones
 
+En el feed de publicaciones se muestran tanto nuestras publicaciones como las de otros usuarios, y podemos interactuar con ellas dando 'me gusta' y dejando comentarios.
+
+<p align="center">
+  <img src="imagenes_uso_app\feedP.jpg" width="200"/>
+  <img src="imagenes_uso_app\comentarFeed.jpg" width="200"/>
+</p>
+
 **7.** Datos del usuario
 
 ### **Repositorios**
