@@ -19,18 +19,14 @@ Con los contenedores backend y pycuda, se realiza la orquestación de contenedor
 
 # **Despliegue de la aplicación**
 
-**1.** Los proyectos del backend con spring boot y con pycuda deben de estar dentro de una carpeta.
-
-**2.** Dentro de esa carpeta se debera de crear el archivo ```docker-compose.yml```, el cual contendra el siguiente contenido:
+**1.** Para levantar los contenedores (Backend Spring Boot y PyCuda) se deberá crear el archivo ```docker-compose.yml```, el cual contendra el siguiente contenido:
 
 ```docker
 version: '3.8'  # Versión de Docker Compose
 
 services:
   python_app:
-    build:
-      context: ./upsglam_pycuda  # Ruta al directorio con el código fuente y el Dockerfile (proyecto pycuda)
-      dockerfile: Dockerfile     # Nombre del archivo Dockerfile que se usará para construir la imagen
+    image: henrytacuri/upsglam_pycuda:latest #Imagen de Docker Hub
     container_name: python_app   # Nombre personalizado para el contenedor (opcional pero útil)
     gpus: "all"                  # Asigna todas las GPUs disponibles al contenedor (requiere soporte NVIDIA)
     ports:
@@ -38,9 +34,7 @@ services:
     restart: unless-stopped      # Reinicia el contenedor a menos que haya sido detenido manualmente
 
   backend:
-    build:
-      context: ./upsglam_backend # Ruta al directorio con el código fuente del backend
-      dockerfile: Dockerfile     # Nombre del Dockerfile del backend
+    image: henrytacuri/upsglam_backend:latest #Imagen de Docker Hub
     container_name: upsglam_backend # Nombre personalizado para el contenedor del backend
     ports:
       - 8080:8080                # Mapea el puerto 8080 del host al 8080 del contenedor
@@ -49,13 +43,13 @@ services:
       - python_app               # Este servicio depende de que python_app esté iniciado primero
 ```
 
-**3.** Todos los Dockerfile requeridos están en las carpetas de los respectivos proyectos de Spring Boot y PyCuda.
+Todos los Dockerfiles con los cuales se construyeron las imagenes de docker (ahora subidas a Docker Hub) están en las carpetas de los respectivos proyectos de Spring Boot y PyCuda.
 
-**4.** Luego abrimos una terminal dentro del mismo directorio donde están los proyectos y ejecutamos el comando ```docker compose up```.
+**2.** Luego abrimos una terminal dentro del mismo directorio donde se creo el archivo ```docker-compose.yml``` y ejecutamos el comando ```docker compose up```.
 
-**5.** En la terminal se vizualizará que los contenedores están ejecutandose correctamente.
+**3.** En la terminal se vizualizará que los contenedores están ejecutandose correctamente.
 
-**6.** Luego en el dispositivo android instalamos la aplicación móvil por medio del apk el cual tiene el nombre ```upsglam```.
+**4.** Luego en el dispositivo android instalamos la aplicación móvil por medio del apk el cual tiene el nombre ```upsglam```.
 
 
 # **Uso de la aplicación**
@@ -79,3 +73,6 @@ services:
 * **Backend - Spring Boot:** https://github.com/HenryTacuri/upsglam_backend
 
 * **PyCuda:** https://github.com/JuanQuizhpi/BackFiltrosFlask
+
+
+**URL del apk de la aplicación móvil:** 
