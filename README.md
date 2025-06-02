@@ -59,24 +59,36 @@ Todos los Dockerfiles con los cuales se construyeron las imagenes de docker (aho
 Si no tenemos una cuenta creada, hacemos clic en el botón 'Regístrate' y completamos los campos.
 
 <p align="center">
-  <img src="imagenes_uso_app/Inicio.jpg" alt="Inicio" width="200"/>
-  <img src="imagenes_uso_app/creacionCuenta.jpg" alt="Creación de cuenta" width="200"/>
-  <img src="imagenes_uso_app/usuarioCreado.jpg" alt="Usuario creado" width="200"/>
+  <img src="imagenes_uso_app/Inicio.jpg" width="200"/>
+  <img src="imagenes_uso_app/creacionCuenta.jpg" width="200"/>
+  <img src="imagenes_uso_app/usuarioCreado.jpg" width="200"/>
 </p>
 
 **2.** Login
 
 Iniciamos sesión con nuestra cuenta creada.
 
-<img src="imagenes_uso_app\inicirSesion.jpg" alt="Inicio" width="200"/>
+<p align="center">
+  <img src="imagenes_uso_app\inicirSesion.jpg" width="200"/>
+</p>
 
 **3.** Procesamiento y publicación de fotos 
 
 Para publicar una foto, vamos al apartado 'Subir fotos', seleccionamos una imagen, elegimos un filtro y hacemos clic en 'Aplicar filtro'. Finalmente, damos clic en 'Publicar foto'.
 
-<img src="imagenes_uso_app\publicarFoto.jpg" alt="Inicio" width="200"/>
+<p align="center">
+  <img src="imagenes_uso_app\publicarFoto.jpg" width="200"/>
+</p>
 
 **4.** Galería de fotos
+
+Dentro del apartado de galería de fotos, podemos encontrar únicamente nuestras publicaciones, donde podemos dar 'me gusta' y dejar comentarios.
+
+<p align="center">
+  <img src="imagenes_uso_app\verP.jpg" width="200"/>
+  <img src="imagenes_uso_app\darMeGustaP.jpg" width="200"/>
+  <img src="imagenes_uso_app\comentarP.jpg" width="200"/>
+</p>
 
 **5.** Feed de publicaciones
 
