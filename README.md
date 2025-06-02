@@ -56,21 +56,29 @@ Todos los Dockerfiles con los cuales se construyeron las imagenes de docker (aho
 
 **1.** Creación de cuenta
 
-Si no contamos con una cuenta creada damos click en el boton de Registrate y llenamos los campos
+Si no tenemos una cuenta creada, hacemos clic en el botón 'Regístrate' y completamos los campos.
 
 <p align="center">
-  <img src="imagenes_uso_app/inicio.jpg" alt="Inicio" width="200"/>
+  <img src="imagenes_uso_app/Inicio.jpg" alt="Inicio" width="200"/>
   <img src="imagenes_uso_app/creacionCuenta.jpg" alt="Creación de cuenta" width="200"/>
   <img src="imagenes_uso_app/usuarioCreado.jpg" alt="Usuario creado" width="200"/>
 </p>
 
 **2.** Login
 
-**3.** Feed de publicaciones en orden cronológico
+Iniciamos sesión con nuestra cuenta creada.
 
-**4.** Procesamiento y publicación de fotos
+<img src="imagenes_uso_app\inicirSesion.jpg" alt="Inicio" width="200"/>
 
-**5.** Galería de fotos
+**3.** Procesamiento y publicación de fotos 
+
+Para publicar una foto, vamos al apartado 'Subir fotos', seleccionamos una imagen, elegimos un filtro y hacemos clic en 'Aplicar filtro'. Finalmente, damos clic en 'Publicar foto'.
+
+<img src="imagenes_uso_app\publicarFoto.jpg" alt="Inicio" width="200"/>
+
+**4.** Galería de fotos
+
+**5.** Feed de publicaciones
 
 **7.** Datos del usuario
 
