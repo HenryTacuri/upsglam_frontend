@@ -56,6 +56,10 @@ Todos los Dockerfiles con los cuales se construyeron las imagenes de docker (aho
 
 **1.** Creación de cuenta
 
+Si no contamos con una cuenta creada damos click en el boton de Registrate y llenamos los campos
+
+![](imagenes_uso_app/creacionCuenta.jpg)
+
 **2.** Login
 
 **3.** Feed de publicaciones en orden cronológico
