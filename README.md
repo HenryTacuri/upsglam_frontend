@@ -58,7 +58,11 @@ Todos los Dockerfiles con los cuales se construyeron las imagenes de docker (aho
 
 Si no contamos con una cuenta creada damos click en el boton de Registrate y llenamos los campos
 
-![](imagenes_uso_app/creacionCuenta.jpg)
+<p align="center">
+  <img src="imagenes_uso_app/inicio.jpg" alt="Inicio" width="200"/>
+  <img src="imagenes_uso_app/creacionCuenta.jpg" alt="Creación de cuenta" width="200"/>
+  <img src="imagenes_uso_app/usuarioCreado.jpg" alt="Usuario creado" width="200"/>
+</p>
 
 **2.** Login
 
